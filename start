@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct{
+int day;
+int month;
+int year;
+} date;
+typedef struct {
+    char name[50];
+    char author[50];
+    char publisher[25];
+    int isbn;
+    date published;
+    int ncopies;
+    int ncopiesb;
+    int ncopiesa;
+
+
+
+
+
+
+}books;
+typedef struct
+{
+    int building;
+    char street[50];
+    char city[25];
+
+} address;
+
+typedef struct
+{
+    char name[50];
+    int id;
+    address uaddress;
+    char phone [20];
+    int isbn1;
+    int isbn2;
+    int isbn3;
+    int age ;
+    char mail[50];
+
+
+
+}user;
+typedef struct
+{
+    int isbn;
+    int id;
+    date borrowed;
+    date due;
+    date returned;
+} borrow;
+
+int main()
+{int d;
+   do{
+        printf(" \n o Book Management (1)\n\t=>Insert, search (…), add new copies, delete, edit\no Member Management (2)\n\t=> Register, remove\no Borrow Management (3)\n\t=> Borrow, return\no Administrative actions (4)\n\t=> Overdue, popular\no Save changes (5)\no Exit (6)\n\t=> Save and exit, exit without saving");
+    scanf("%d",&d);
+   /* if (d==1)
+    {
+        //book management
+    }
+    */
+    if (d==2)
+    {
+        // MEMBER MANAGEME
+    }
+    if (d==3)
+    {
+        //borrow management
+    }
+      if (d==4)
+    {
+        //ADDMINSTRATIVE ACTIONS
+    }
+      if (d==5)
+    {
+        //SAVE CHANGES
+    }
+      if (d==6)
+    {
+        //EXIT
+    }
+
+
+
+
+   }
+   while ((d>6)||(d<1));
+
+    return 0;
+}
