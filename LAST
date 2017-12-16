@@ -1,0 +1,225 @@
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct
+{
+    int building;
+    char street[25];
+    char city[25];
+
+} address;
+typedef struct
+{
+    char firstname[50];
+    char lastname[50];
+    int ID;
+    char phone[25];
+    char mail[25];
+    address uaddress;
+    int age;
+} user;
+typedef struct
+{
+    int day;
+    int month;
+    int year;
+} date;
+
+typedef struct
+{
+    char name[100];
+    char author[100];
+    char publisher[100];
+    char category[100];
+    int isbn;
+    int ncopies;
+    int ncopiesa;
+    date published;
+} book;
+
+typedef struct
+{
+    int isbn;
+    int id;
+    date borrowed;
+    date due;
+    date returned;
+} borrow;
+book booksarray[100];
+int count=0;
+void addnew(user*userarray,int* count)
+{
+    int x;
+    x= *count;
+    printf("%d",*count); //
+
+    printf("\nplease enter first name\n");
+getchar();
+    gets(userarray[x].firstname);
+    printf("\nplease enter Last name\n");
+
+    gets(userarray[x].lastname);
+    printf("please enter your age\n");
+    scanf("%d",&userarray[x].age);
+    printf("\nAddress \n \t please enter building number ");
+    scanf("%d",&userarray[x].uaddress.building);
+    printf("\n \t street name: ");
+getchar();
+    gets(userarray[x].uaddress.street);
+    printf("\n\t city :");
+
+    gets(userarray[x].uaddress.city);
+
+    printf("\n please enter mobile number");
+
+    gets(userarray[x].phone);
+    printf("\n please enter E-mail address \n");
+    userarray[x].ID=2000+x;
+
+    gets(userarray[x].mail);
+    system("cls");
+    printf("User Added successfully\n %s %s \n %d \n %d,%s,%s \n %d \n %s \n %s  ",userarray[x].firstname,userarray[x].lastname,userarray[x].ID,userarray[x].uaddress.building,userarray[x].uaddress.street,userarray[x].uaddress.city,userarray[x].age,userarray[x].phone,userarray[x].mail);
+*count=*count+1;
+
+}
+void deleteuser(user* userarray,int count,int*pdel,int*deleted)
+{
+
+int b=-1;
+int x;
+int i;
+int p;
+int ds;
+p=*pdel;
+int ba;
+
+while (b==-1)
+{
+
+   x=searchID(userarray,count);
+
+   if (x==-1)
+    {
+        do {printf("not found\n press 1) retry 2) back \n ");
+    scanf("%d",&ba);
+        } while ((ba!=1)&&(ba!=2));
+    if (ba==1)
+        ba=-1; // so the loop continues excuting
+    else if(ba==2)
+        return; // to the main menu
+            }
+    else{
+        break;
+    }
+   // break to continue deleting the user
+}
+
+
+do{
+    printf("\n Are you sure ? \n (1)Yes (2) cancel ");
+    scanf("%d",&ds);
+}
+while((ds!=1)&&(ds!=2));
+if (ds==1)
+    {deleted[p]=x;  //saving the index of the user trying to delete
+        *(pdel)=*(pdel)+1; //counting the deleted members in this session
+    }
+     if (ds==2)
+            return;
+
+
+
+
+
+    for (i=0;i<*(pdel);i++)
+        printf("\n%d\n",deleted[i]);
+
+
+}
+int searchID(user * userarray,int count)
+        {
+            int i=0;
+            int x;
+            int T=-1;
+            printf("ENTER USER ID");
+
+            scanf("%d",&x);
+
+            for (i=0;i<count;i++)
+            {
+                if(userarray[i].ID==x)
+                   {
+                       T=i;
+                       break;
+                   }
+
+            }
+
+         return T;
+
+
+        }
+
+
+void usermenu(user*userarray,int*count)
+{
+    system("cls");
+    int deleted[25];
+    int ds;
+    int countdeleted=0;
+               do{
+        printf("USER MANAGEMENT \n --------------- \n(1) Register \t (2) Delete User ");
+        scanf("%d",&ds);
+
+    }while((ds!=2)&&(ds!=1));
+      if (ds==1)
+    addnew(userarray,count);
+    else
+        deleteuser(userarray,*count,&countdeleted,deleted);
+        int ba;
+        do {
+        printf("press \n1) to back \n 2) exit without saving ");
+        scanf("%d",&ba);
+        } while ((ba!=1)&&(ba!=2));
+
+}
+
+int main()
+{
+    FILE* fu;
+    FILE * books;
+    books=fopen("books.txt","r");
+    user userarray[100];
+
+
+
+
+    /*    while (!feof(books))
+    {
+        fscanf(books,"%[^,]%*c%[^,]%*c%[^,]%*c%[^,]%*c%d,%d,%d,%d/%d/%d\n",booksarray[count].name, booksarray[count].author, booksarray[count].publisher,booksarray[count].category,&booksarray[count].isbn,&booksarray[count].ncopies,&booksarray[count].ncopiesa,&booksarray[count].published.day,&booksarray[count].published.month,&booksarray[count].published.year);
+        count++;
+    }
+    fclose(books);
+    */
+    int ucount;
+            fu=fopen("userx.txt","r");
+
+
+float d;
+    while(!feof(fu))        //reading the file
+    {
+
+        fscanf(fu,"%[^,]%*c%[^,]%*c%d,%d,%[^,]%*c%[^,]%*c%[^,]%*c%d,%s\n",userarray[ucount].lastname,userarray[ucount].firstname,&userarray[ucount].ID,&userarray[ucount].uaddress.building,userarray[ucount].uaddress.street,userarray[ucount].uaddress.city,userarray[ucount].phone,&userarray[ucount].age,userarray[ucount].mail);
+        ucount++;
+    }
+    fclose(fu);
+    do
+    {
+                printf("o Book Management (1)\n\t=>Insert, search, add new copies, delete, edit\no Member Management (2)\n\t=> Register, remove\no Borrow Management (3)\n\t=> Borrow, return\no Administrative actions (4)\n\t=> Overdue, popular\no Save changes (5)\no Exit (6)\n\t=> Save and exit, exit without saving\n");
+        scanf("%f",&d);
+    } while((d!=1)&&(d!=2)&&(d!=3)&&(d!=4)&&(d!=5)&&(d!=6)) ;
+
+    if(d==2)
+        usermenu(userarray,&ucount);
+
+    return 0;
+}
