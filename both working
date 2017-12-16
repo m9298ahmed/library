@@ -1,0 +1,841 @@
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct
+{
+    int building;
+    char street[25];
+    char city[25];
+
+} address;
+typedef struct
+{
+    char firstname[50];
+    char lastname[50];
+    int ID;
+    char phone[25];
+    char mail[25];
+    address uaddress;
+    int age;
+} user;
+typedef struct
+{
+    int day;
+    int month;
+    int year;
+} date;
+
+typedef struct
+{
+    char name[100];
+    char author[100];
+    char publisher[100];
+    char category[100];
+    int isbn;
+    int ncopies;
+    int ncopiesa;
+    date published;
+} book;
+
+typedef struct
+{
+    int isbn;
+    int id;
+    date borrowed;
+    date due;
+    date returned;
+} borrow;
+void addnew(user*userarray,int* count)
+{
+    int x;
+    x= *count;
+    printf("%d",*count); //
+
+    printf("\nplease enter first name\n");
+    getchar();
+    gets(userarray[x].firstname);
+    printf("\nplease enter Last name\n");
+
+    gets(userarray[x].lastname);
+    printf("please enter your age\n");
+    scanf("%d",&userarray[x].age);
+    printf("\nAddress \n \t please enter building number ");
+    scanf("%d",&userarray[x].uaddress.building);
+    printf("\n \t street name: ");
+    getchar();
+    gets(userarray[x].uaddress.street);
+    printf("\n\t city :");
+
+    gets(userarray[x].uaddress.city);
+
+    printf("\n please enter mobile number");
+
+    gets(userarray[x].phone);
+    printf("\n please enter E-mail address \n");
+    userarray[x].ID=2000+x;
+
+    gets(userarray[x].mail);
+    system("cls");
+    printf("User Added successfully\n %s %s \n %d \n %d,%s,%s \n %d \n %s \n %s  ",userarray[x].firstname,userarray[x].lastname,userarray[x].ID,userarray[x].uaddress.building,userarray[x].uaddress.street,userarray[x].uaddress.city,userarray[x].age,userarray[x].phone,userarray[x].mail);
+    *count=*count+1;
+
+}
+void deleteuser(user* userarray,int count,int*pdel,int*deleted)
+{
+
+    int b=-1;
+    int x;
+    int i;
+    int p;
+    int ds;
+    p=*pdel;
+    int ba;
+
+    while (b==-1)
+    {
+
+        x=searchID(userarray,count);
+
+        if (x==-1)
+        {
+            do
+            {
+                printf("not found\n press 1) retry 2) back \n ");
+                scanf("%d",&ba);
+            }
+            while ((ba!=1)&&(ba!=2));
+            if (ba==1)
+                ba=-1; // so the loop continues excuting
+            else if(ba==2)
+                return; // to the main menu
+        }
+        else
+        {
+            break;
+        }
+        // break to continue deleting the user
+    }
+
+
+    do
+    {
+        printf("\n Are you sure ? \n (1)Yes (2) cancel ");
+        scanf("%d",&ds);
+    }
+    while((ds!=1)&&(ds!=2));
+    if (ds==1)
+    {
+        deleted[p]=x;  //saving the index of the user trying to delete
+        *(pdel)=*(pdel)+1; //counting the deleted members in this session
+    }
+    if (ds==2)
+        return;
+
+
+
+
+
+    for (i=0; i<*(pdel); i++)
+        printf("\n%d\n",deleted[i]);
+
+
+}
+int searchID(user * userarray,int count)
+{
+    int i=0;
+    int x;
+    int T=-1;
+    printf("ENTER USER ID");
+
+    scanf("%d",&x);
+
+    for (i=0; i<count; i++)
+    {
+        if(userarray[i].ID==x)
+        {
+            T=i;
+            break;
+        }
+
+    }
+
+    return T;
+
+
+}
+
+
+void usermenu(user*userarray,int*count)
+{
+    system("cls");
+    int deleted[25];
+    int ds;
+    int countdeleted=0;
+    do
+    {
+        printf("USER MANAGEMENT \n --------------- \n(1) Register \t (2) Delete User ");
+        scanf("%d",&ds);
+
+    }
+    while((ds!=2)&&(ds!=1));
+    if (ds==1)
+        addnew(userarray,count);
+    else
+        deleteuser(userarray,*count,&countdeleted,deleted);
+    int ba;
+    do
+    {
+        printf("press \n1) to back \n 2) exit without saving ");
+        scanf("%d",&ba);
+    }
+    while ((ba!=1)&&(ba!=2));
+
+}
+book booksarray[100];
+user usersarray[100];
+int count=0;
+int booksdeleted[100];//save indices of books to be deleted
+
+
+date scandate()
+{
+    int v=0;
+    date issued;
+    scanf("%d/%d/%d",&issued.day,&issued.month,&issued.year);
+    if (issued.day>31||issued.day<1||issued.month>12||issued.month<1||issued.year>9999||issued.year<1000)
+    {
+        v=1;
+        while (v==1)
+        {
+            v=0;
+            printf("Please Enter correct date format as in dd/mm/yy: ");
+            scandate();
+        }
+    }
+    return issued;
+}
+
+
+book addnewbook()
+{
+    int i,dup=0;
+    book a;
+    printf("New Book\n");
+    printf("Name: ");
+    getchar();
+    gets(a.name);
+    dup=0;
+    printf("\nISBN: ");
+    scanf("%d",&a.isbn);
+    for (i=0; i<count; i++)
+    {
+        if (a.isbn == booksarray[i].isbn) dup=1;
+    }
+    if (dup==1)
+    {
+        while (dup==1)
+        {
+            dup=0;
+            printf("\nThis ISBN ALREADY EXISTS!\nPLEASE ENTER A UNIQUE ISBN: ");
+            scanf("%d",&a.isbn);
+            for (i=0; i<count; i++)
+            {
+                if (a.isbn == booksarray[i].isbn) dup=1;
+            }
+        }
+    }
+
+    printf("\nAuthor: ");
+    getchar();
+    gets(a.author);
+    printf("\nPublisher: ");
+    gets(a.publisher);
+    printf("\nCategory: ");
+    gets(a.category);
+    printf("\nNumber of copies: ");
+    scanf("%d",&a.ncopies);
+    printf("\nNumber of Available copies: ");
+    scanf("%d",&a.ncopiesa);
+    printf("\nDate issued:");
+    a.published = scandate();
+    return a;
+}
+int searchisbn(int a)
+{
+    int f=0,i;
+    for (i=0; i<count; i++)
+    {
+        if (a==booksarray[i].isbn)
+        {
+            system("cls");
+            printf("Book title: %s\nAuthor: %s\nPublisher: %s\nCategory: %s\nNumber of copies: %d\nNumber of copies available: %d\nDate issued: %d/%d/%d\n",booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].category,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+            f=1;
+            return i;
+        }
+    }
+    if (f!=1) return -1;
+}
+
+void editbook(int g)
+{
+
+    char newname[100];
+    int newint;
+    int isb,save,td=1,i,dup=0,r;
+    printf("\n\nChoose which Entry you want to edit:\n1)Book Title\n2)Author\n3)Publisher\n4)Category\n5)ISBN\n6)Number of copies\n7)Number of Available copies\n8)Date\n9)Go Back to main menu\n");
+    scanf("%d",&td);
+    if (td == 1)
+    {
+        system("cls");
+        printf("Edit book name: %s\n",booksarray[g].name);
+        printf("Enter New Name: ");
+        getchar();
+        gets(newname);
+        strcpy(booksarray[g].name,newname);
+        printf("\nDone! press 9 to Go back");
+        scanf("%d",&r);
+        if (r==9)
+            editbook(g);
+    }
+    else if (td==2)
+    {
+        system("cls");
+        printf("Edit Author: %s\n",booksarray[g].author);
+        printf("Enter New Author: ");
+        getchar();
+        gets(newname);
+        strcpy(booksarray[g].author,newname);
+        printf("\nDone! press 9 to Go back");
+        scanf("%d",&r);
+        if (r==9)
+            editbook(g);
+    }
+    else if (td==3)
+    {
+        system("cls");
+        printf("Edit publisher: %s\n",booksarray[g].author);
+        printf("Enter New publisher: ");
+        getchar();
+        gets(newname);
+        strcpy(booksarray[g].publisher,newname);
+        printf("\nDone! press 9 to Go back");
+        scanf("%d",&r);
+        if (r==9)
+            editbook(g);
+    }
+    else if (td==4)
+    {
+        system("cls");
+        printf("Edit Category: %s",booksarray[g].author);
+        printf("Enter New Category: ");
+        getchar();
+        gets(newname);
+        strcpy(booksarray[g].category,newname);
+        printf("\nDone! press 9 to Go back");
+        scanf("%d",&r);
+        if (r==9)
+            editbook(g);
+    }
+    else if (td==5)
+    {
+        system("cls");
+        printf("Edit ISBN: %d",booksarray[g].isbn);
+        printf("Enter New ISBN: ");
+        do
+        {
+            int dup=0;
+            printf("\nISBN: ");
+            scanf("%d",&newint);
+            for (i=0; i<count; i++)
+            {
+                if (newint == booksarray[i].isbn) dup=1;
+            }
+        }
+        while (dup==1);
+        booksarray[g].isbn=newint;
+        printf("\nDone! press 9 to Go back");
+        scanf("%d",&r);
+        if (r==9)
+            editbook(g);
+    }
+    else if (td==6)
+    {
+        system("cls");
+        printf("Edit Number of copies: %d",booksarray[g].ncopies);
+        do
+        {
+            printf("Enter New Number of copies: ");
+            scanf("%d",&newint);
+        }
+        while (newint<0);
+        booksarray[g].ncopies=newint;
+        printf("\nDone! press 9 to Go back");
+        scanf("%d",&r);
+        if (r==9)
+            editbook(g);
+    }
+    else if (td==7)
+    {
+        system("cls");
+        printf("Edit Number of available copies: %d",booksarray[g].ncopiesa);
+        do
+        {
+            printf("Enter New Number of available copies: ");
+            scanf("%d",&newint);
+        }
+        while (newint<0);
+        booksarray[g].ncopiesa=newint;
+        printf("\nDone!\n press 9 to Go back");
+        scanf("%d",&r);
+        if (r==9)
+            editbook(g);
+    }
+    else if (td==9)
+    {
+        system("cls");
+        bookmenu();
+    }
+
+}
+void searchmenu()
+{
+    system("cls");
+    int td;
+    printf("Search for a book\nChoose Entry:\n1) Book title\n2) Author\n3) ISBN\n4) Category\n9) Go back to Main Menu\n");
+    scanf("%d",&td);
+    system("cls");
+    if (td == 1)
+    {
+        char searchtitle[100];
+        printf("Search for book title: ");
+        getchar();
+        gets(searchtitle);
+        int r,f=0,i;
+        for (i=0; i<count; i++)
+        {
+            if(strstr(booksarray[i].name, searchtitle) != NULL)
+            {
+                f=1;
+                printf("\n%s\n\tAuthor: %s\n\tPublisher: %s\n\tCategory: %s\n\tISBN: %d\n\tNumber of copies: %d\n\tNumber of copies available: %d\n\tDate issued: %d/%d/%d\n",booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].category,booksarray[i].isbn,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+            }
+        }
+        if (f!=1) printf("Book not found!\n");
+        printf("\nPress 1 to search for another Book\nPress 9 to go back to Main Menu\n");
+        scanf("%d",&r);
+        if (r==9)
+        {
+            system("cls");
+            bookmenu();
+        }
+        if (r==1)
+            searchmenu();
+
+        /*for (i=0; i<count; i++)
+        {
+
+            for (j=0; j<strlen(searchtitle); j++)
+            {
+                if (searchtitle[j]==booksarray[i].name[j]||searchtitle[j]==booksarray[i].name[j]+32)
+                {
+                    k++;
+                }
+                else break;
+
+            }
+
+            if(k==strlen(searchtitle))
+            {
+                f=1;
+                printf("\n%s\n\tAuthor: %s\n\tPublisher: %s\n\tCategory: %s\n\tISBN: %d\n\tNumber of copies: %d\n\tNumber of copies available: %d\n\tDate issued: %d/%d/%d\n",booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].category,booksarray[i].isbn,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+            }
+            k=0;
+        }
+        if (f!=1) printf("Book not found!");*/
+    }
+    else if (td==2)
+    {
+        char searchauthor[100];
+        printf("Search for Author's books: ");
+        getchar();
+        gets(searchauthor);
+        int k=0,f=0,i,j;
+        for (i=0; i<count; i++)
+        {
+
+            for (j=0; j<strlen(searchauthor); j++)
+            {
+                if (searchauthor[j]==booksarray[i].author[j]||searchauthor[j]==booksarray[i].author[j]+32)
+                {
+                    k++;
+                }
+                else break;
+
+            }
+
+            if(k==strlen(searchauthor))
+            {
+                f=1;
+                printf("\n%s\n\tBook Title: %s\n\tPublisher: %s\n\tCategory: %s\n\tISBN: %d\n\tNumber of copies: %d\n\tNumber of copies available: %d\n\tDate issued: %d/%d/%d\n",booksarray[i].author,booksarray[i].name,booksarray[i].publisher,booksarray[i].category,booksarray[i].isbn,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+            }
+            k=0;
+        }
+        if (f!=1) printf("Author not found!");
+        int r;
+        printf("\nPress 1 to search for another Book\nPress 9 to go back to Main Menu\n");
+        scanf("%d",&r);
+        if (r==9)
+        {
+            system("cls");
+            bookmenu();
+        }
+        if (r==1)
+            searchmenu();
+    }
+    else if (td==3)
+    {
+        int searchisbn,f=0,i,r;
+        printf("Search for ISBN: ");
+        scanf("%d",&searchisbn);
+        for (i=0; i<count; i++)
+        {
+            if (searchisbn==booksarray[i].isbn)
+            {
+                printf("\nBook title: %s\nAuthor: %s\nPublisher: %s\nCategory: %s\nNumber of copies: %d\nNumber of copies available: %d\nDate issued: %d/%d/%d\n",booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].category,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+                f=1;
+            }
+        }
+        if (f!=1) printf("ISBN not found!");
+        printf("\nPress 1 to search for another Book\nPress 9 to go back to Main Menu\n");
+        scanf("%d",&r);
+        if (r==9)
+        {
+            system("cls");
+            bookmenu();
+        }
+        if (r==1)
+            searchmenu();
+    }
+    else if (td==4)
+    {
+        char searchcategory[100];
+        printf("Search for Book Category: ");
+        getchar();
+        gets(searchcategory);
+        int k=0,f=0,i,j,r;
+        for (i=0; i<count; i++)
+        {
+
+            for (j=0; j<strlen(searchcategory); j++)
+            {
+                if (searchcategory[j]==booksarray[i].category[j]||searchcategory[j]==booksarray[i].category[j]+32)
+                {
+                    k++;
+                }
+                else break;
+
+            }
+
+            if(k==strlen(searchcategory))
+            {
+                f=1;
+                printf("Category: %s\nTitle: %s\n\tAuthor: %s\n\tPublisher: %s\n\tISBN: %d\n\tNumber of copies: %d\n\tNumber of copies available: %d\n\tDate issued: %d/%d/%d\n",booksarray[i].category,booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].isbn,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+            }
+            k=0;
+        }
+        if (f!=1) printf("Category not found!");
+        printf("\nPress 1 to search for another Book\nPress 9 to go back to Main Menu\n");
+        scanf("%d",&r);
+        if (r==9)
+        {
+            system("cls");
+            bookmenu();
+        }
+        if (r==1)
+            searchmenu();
+    }
+    else if (td==9) bookmenu();
+}
+
+void bookmenu()
+{
+    system("cls");
+    int sd,x,r;
+    printf("1) Insert New Book\n2) Search\n3) Add New copies\n4) Delete\n5) Edit\n9) Go back to Main Menu\n");
+    scanf("%d",&sd);
+    if (sd==1)
+    {
+        system("cls");
+        x=count++;
+        booksarray[x]=addnewbook();
+        printf("\nBook Added Successfully!\nPress 9 to go back to Main Menu\n");
+        scanf("%d",&r);
+        if (r==9)
+        {
+            system("cls");
+            bookmenu();
+        }
+
+        /*books=fopen("books.txt","a");
+        int save;
+        printf("1) Save\n2) Discard\n");
+        scanf("%d",&save);
+        if (save==1)
+        {
+            fprintf(books,"\n%s,%s,%s,%s,%d,%d,%d,%d/%d/%d",booksarray[x].name,booksarray[x].author,booksarray[x].publisher,booksarray[x].category,booksarray[x].isbn,booksarray[x].ncopies,booksarray[x].ncopiesa,booksarray[x].published.day,booksarray[x].published.month,booksarray[x].published.year);
+            fclose(books);
+            printf("\nBook Added Successfully!\nPress 9 to go back to Main Menu\n");
+            scanf("%d",&r);
+            if (r==9)
+            {
+                system("cls");
+                mainmenu(books);
+            }
+        }
+        else if (save==2)
+        {
+            printf("\nPress 9 to go back to Main Menu\n");
+            scanf("%d",&r);
+            if (r==9)
+            {
+                system("cls");
+                mainmenu(books);
+            }
+        }
+
+        /*system("cls");
+        /*for (i=0;i<count;i++)
+        {
+        printf("Book (%d):\n%s,%s,%s,%s,%d,%d,%d,%d/%d/%d\n",i+1,booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].category,booksarray[i].isbn,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+        }*/
+    }
+    else if (sd==2)
+    {
+        searchmenu();
+    }
+
+    else if (sd==3)
+    {
+        system("cls");
+        int isb,newcopies,g,save;
+        printf("Add new copy\n Enter ISBN: ");
+        scanf("%d",&isb);
+        g=searchisbn(isb);
+        if (g!=-1)
+        {
+            do
+            {
+                printf("Add new number of copies:  ");
+                scanf("%d",&newcopies);
+            }
+            while (newcopies<0);
+            if (newcopies>0)
+            {
+                booksarray[g].ncopies+=newcopies;
+                booksarray[g].ncopiesa+=newcopies;
+                /*printf("\n1) Save   2) Discard\n");
+                scanf("%d",&save);
+
+                if (save==1)
+                {
+
+                    books = fopen("books.txt", "w");
+                    for(i=0; i<count; i++)
+                    {
+                        fprintf(books,"%s,%s,%s,%s,%d,%d,%d,%d/%d/%d\n",booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].category,booksarray[i].isbn,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+                    }
+                    fclose(books);*/
+                printf("\nBook Added Successfully!\nPress 9 to go back\n");
+                scanf("%d",&r);
+                if (r==9)
+                {
+                    system("cls");
+                    bookmenu();
+                }
+            }
+
+
+        }
+        else
+        {
+            while (g==-1)
+            {
+                printf("\nISBN Not Found!\nEnter Correct ISBN: ");
+                scanf("%d",&isb);
+                g=searchisbn(isb);
+            }
+            editbook(g);
+        }
+
+    }
+    else if (sd==4)
+    {
+        system("cls");
+        int isb,newcopies,del,save;
+        printf("Delete A book\n Enter ISBN: ");
+        scanf("%d",&isb);
+        del=searchisbn(isb);
+        if (del!=-1)
+        {
+            printf("Are You Sure?\n1) Delete\t2) Discard\n");
+            scanf("%d",&save);
+            if (save==1)
+            {
+                /*books = fopen("books.txt", "w");
+                for(i=0; i<count; i++)
+                {
+                    if (i!=del)
+                    {
+                        fprintf(books,"%s,%s,%s,%s,%d,%d,%d,%d/%d/%d\n",booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].category,booksarray[i].isbn,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+                    }
+                }
+                fclose(books);*/
+                printf("\nBook Deleted Successfully!\nPress 9 to go back to Main Menu\n");
+                scanf("%d",&r);
+                if (r==9)
+                {
+                    system("cls");
+                    bookmenu();
+                }
+
+            }
+            else if (save==2)
+            {
+                del=-1;
+                printf("\nPress 9 to go back to Main Menu\n");
+                scanf("%d",&r);
+                if (r==9)
+                {
+                    system("cls");
+                    bookmenu();
+                }
+            }
+
+
+        }
+
+        else
+        {
+            while (del==-1)
+            {
+                printf("\nISBN Not Found!\nEnter Correct ISBN: ");
+                scanf("%d",&isb);
+                del=searchisbn(isb);
+            }
+            printf("Are You Sure?\n1) Delete\t2) Discard\n");
+            scanf("%d",&save);
+            if (save==1)
+            {
+                /*books = fopen("books.txt", "w");
+                for(i=0; i<count; i++)
+                {
+                    if (i!=del)
+                    {
+                        fprintf(books,"%s,%s,%s,%s,%d,%d,%d,%d/%d/%d\n",booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].category,booksarray[i].isbn,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+                    }
+                }
+                fclose(books);*/
+                printf("\nBook Deleted Successfully!\nPress 9 to go back to Main Menu\n");
+                scanf("%d",&r);
+                if (r==9)
+                {
+                    system("cls");
+                    bookmenu();
+                }
+            }
+            else if (save==2)
+            {
+                del=-1;
+                printf("\nPress 9 to go back to Main Menu\n");
+                scanf("%d",&r);
+                if (r==9)
+                {
+                    system("cls");
+                    bookmenu();
+                }
+            }
+        }
+    }
+    else if (sd==5)
+    {
+        system("cls");
+        int g;
+        int newint,isb;
+        printf("Edit A book\n Enter ISBN: ");
+        scanf("%d",&isb);
+        g=searchisbn(isb);
+        if (g!=-1)
+        {
+            editbook(g);
+        }
+        else if (g==-1)
+        {
+            while (g==-1)
+            {
+                printf("\nISBN Not Found!\nEnter Correct ISBN: ");
+                scanf("%d",&isb);
+                g=searchisbn(isb);
+            }
+            editbook(g);
+        }
+
+    }
+    else if (sd==9)
+    {
+        system("cls");
+        bookmenu();
+    }
+}
+/*int savechanges(FILE *fu,user usersarray,int *ucount,FILE books)
+{
+
+    books = fopen("books.txt", "w");
+    for(i=0; i<count; i++)
+    {
+        if (i!=del)
+        {
+            fprintf(books,"%s,%s,%s,%s,%d,%d,%d,%d/%d/%d\n",booksarray[i].name,booksarray[i].author,booksarray[i].publisher,booksarray[i].category,booksarray[i].isbn,booksarray[i].ncopies,booksarray[i].ncopiesa,booksarray[i].published.day,booksarray[i].published.month,booksarray[i].published.year);
+        }
+    }
+    fclose(books);
+}
+*/
+int main()
+{
+    FILE* fu;
+    FILE * books;
+    books=fopen("books.txt","r");
+    user userarray[100];
+    while (!feof(books))
+    {
+        fscanf(books,"%[^,]%*c%[^,]%*c%[^,]%*c%[^,]%*c%d,%d,%d,%d/%d/%d\n",booksarray[count].name, booksarray[count].author, booksarray[count].publisher,booksarray[count].category,&booksarray[count].isbn,&booksarray[count].ncopies,&booksarray[count].ncopiesa,&booksarray[count].published.day,&booksarray[count].published.month,&booksarray[count].published.year);
+        count++;
+    }
+    fclose(books);
+
+    int ucount;
+    fu=fopen("userx.txt","r");
+
+
+    float d;
+
+    while(!feof(fu))        //reading the file
+    {
+
+        fscanf(fu,"%[^,]%*c%[^,]%*c%d,%d,%[^,]%*c%[^,]%*c%[^,]%*c%d,%s\n",userarray[ucount].lastname,userarray[ucount].firstname,&userarray[ucount].ID,&userarray[ucount].uaddress.building,userarray[ucount].uaddress.street,userarray[ucount].uaddress.city,userarray[ucount].phone,&userarray[ucount].age,userarray[ucount].mail);
+        ucount++;
+    }
+    fclose(fu);
+    do
+    {
+        printf("o Book Management (1)\n\t=>Insert, search, add new copies, delete, edit\no Member Management (2)\n\t=> Register, remove\no Borrow Management (3)\n\t=> Borrow, return\no Administrative actions (4)\n\t=> Overdue, popular\no Save changes (5)\no Exit (6)\n\t=> Save and exit, exit without saving\n");
+        scanf("%f",&d);
+    }
+    while((d!=1)&&(d!=2)&&(d!=3)&&(d!=4)&&(d!=5)&&(d!=6)) ;
+
+    if (d==1)
+        bookmenu();
+    if(d==2)
+        usermenu(userarray,&ucount);
+    if (d==5)
+        //savechanges(fu,userarray,&ucount,books);
+    return 0;
+}
